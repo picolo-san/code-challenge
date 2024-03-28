@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { getCurrencies } from "services/api/currency";
-import { Currency } from "types";
+import { ICurrency } from "types";
 
 export const useCurrencies = () => {
-  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {

@@ -4,81 +4,40 @@ import Button from "components/comon/Button";
 import CurrencyInput from "./components/CurrencyInput";
 import CurrencyModal from "./components/CurrencyModal";
 import { ReactComponent as SwapDownIcon } from "assets/icons/svg/arrows/swap-down.svg";
-import { amountTypes, useAmounts, useComputedAmounts } from "./hooks";
+import { useSwapForm } from "./hooks";
 import { Container, Form, Title, ButtonSwap } from "./styles";
+import { ICurrency } from "types";
+
+export enum INPUT_NAME {
+  PAYMENT = "payment",
+  RECEIPT = "receipt",
+}
 
 const SwapForm = () => {
-  const {
-    amountState,
-    setPayAmount,
-    setReceiveAmount,
-    setPayCurrency,
-    swapAmounts,
-    setReceiveCurrency,
-    setFocusPayCurrency,
-    setFocusReceiveCurrency,
-  } = useAmounts();
+  const [currentFocusInput, setCurrentFocusInput] = useState<INPUT_NAME>(
+    INPUT_NAME.PAYMENT,
+  );
+  const { formState, changeInputValue, changeCurrcenyInsideInput, swapInputs } =
+    useSwapForm();
+  const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
-  const { caculateAmountCounterPartByItself, caculateAmountByItsCounterPart } =
-    useComputedAmounts();
-  const [isCurrencyModalOpen, setIsCurrencyModalOpen] =
-    useState<boolean>(false);
+  const toggleModal = () => setModalOpen((prevState) => !prevState);
 
-  const toggleCurrencyModel = () =>
-    setIsCurrencyModalOpen(!isCurrencyModalOpen);
-
-  const handleChangePayAmount = (number: number) => {
-    setReceiveAmount(
-      caculateAmountCounterPartByItself(amountState.receiveAmount, {
-        ...amountState.payAmount,
-        number: number,
-      }),
-    );
-    setPayAmount(number);
+  const handleChange = (inputName: INPUT_NAME, value: number) => {
+    changeInputValue(inputName, value);
   };
 
-  const handleChangeReceiveAmount = (number: number) => {
-    setPayAmount(
-      caculateAmountCounterPartByItself(amountState.payAmount, {
-        ...amountState.receiveAmount,
-        number: number,
-      }),
-    );
-    setReceiveAmount(number);
-  };
-
-  const handleSelectCurrency = (currency: string, price: number) => {
-    if (amountState.currentFocusAmountType === amountTypes.PAY) {
-      setPayAmount(
-        caculateAmountByItsCounterPart(
-          {
-            ...amountState.payAmount,
-            currency: currency,
-            price: price,
-          },
-          amountState.receiveAmount,
-        ),
-      );
-      setPayCurrency(currency, price);
-    }
-    if (amountState.currentFocusAmountType === amountTypes.RECEIVE) {
-      setReceiveAmount(
-        caculateAmountByItsCounterPart(
-          {
-            ...amountState.receiveAmount,
-            currency: currency,
-            price: price,
-          },
-          amountState.payAmount,
-        ),
-      );
-      setReceiveCurrency(currency, price);
-    }
+  const handleSelectCurrency = (inputName: INPUT_NAME, value: ICurrency) => {
+    changeCurrcenyInsideInput(inputName, value);
   };
 
   const handleClickSwap = (event: React.FormEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    swapAmounts();
+    swapInputs();
+  };
+
+  const handleFocus = (inputName: INPUT_NAME) => {
+    setCurrentFocusInput(inputName);
   };
 
   return (
@@ -87,17 +46,19 @@ const SwapForm = () => {
       <Form>
         <CurrencyInput
           label="You pay"
-          amount={amountState.payAmount}
-          onChangeNumber={handleChangePayAmount}
-          onClickCurrency={toggleCurrencyModel}
-          onFocus={setFocusPayCurrency}
+          name={INPUT_NAME.PAYMENT}
+          amount={formState.payment}
+          onFocusInput={handleFocus}
+          onChangeNumber={handleChange}
+          onClickCurrency={toggleModal}
         />
         <CurrencyInput
           label="You receive"
-          amount={amountState.receiveAmount}
-          onChangeNumber={handleChangeReceiveAmount}
-          onClickCurrency={toggleCurrencyModel}
-          onFocus={setFocusReceiveCurrency}
+          name={INPUT_NAME.RECEIPT}
+          amount={formState.receipt}
+          onFocusInput={handleFocus}
+          onChangeNumber={handleChange}
+          onClickCurrency={toggleModal}
         />
         <Button isFullWidth size="big">
           Connect Wallet
@@ -107,12 +68,11 @@ const SwapForm = () => {
         </ButtonSwap>
       </Form>
       <CurrencyModal
-        isOpen={isCurrencyModalOpen}
-        currentCurrency={
-          amountState[amountState.currentFocusAmountType].currency
-        }
+        isOpen={isModalOpen}
+        isSelectedFor={currentFocusInput}
+        currentCurrency={formState[currentFocusInput].currency}
         onSelectCurrency={handleSelectCurrency}
-        closeModal={toggleCurrencyModel}
+        close={toggleModal}
       />
     </Container>
   );

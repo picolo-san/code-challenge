@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { debounce } from "lodash";
 
 import { formatCash } from "services/utils";
 import CryptoIcon from "components/comon/CryptoIcon";
@@ -10,33 +11,45 @@ import {
   Cash,
   SelectCurrencyButton,
 } from "./styles";
-import { Amount } from "types";
+import { IAmount } from "types";
+import { INPUT_NAME } from "pages/SwapForm";
 
 interface CurrencyInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
-  amount: Amount;
-  onChangeNumber: (number: number) => void;
+  amount: IAmount;
+  name: INPUT_NAME;
+  onChangeNumber: (inputName: INPUT_NAME, value: number) => void;
   onClickCurrency: () => void;
-  onFocus: () => void;
+  onFocusInput: (inputName: INPUT_NAME) => void;
 }
 
-const MAX_CURRENCY_INPUT_LENGTH = 15;
+const MAX_CURRENCY_INPUT_LENGTH = 20;
 const FLOAT_STRING_REGEX = /^[+-]?([0-9]*[.{0,1}])?[0-9]*$/;
 
 const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
   label = "",
   amount,
+  name,
   onChangeNumber,
   onClickCurrency,
-  onFocus,
+  onFocusInput,
   ...rest
 }) => {
   const [input, setInput] = useState<string>("");
+  const inputName = name;
 
   useEffect(() => {
-    setInput(amount.number > 0 ? String(amount.number) : "");
-  }, [amount.currency, amount.number]);
+    setInput(String(amount.number));
+  }, [amount.number]);
+
+  const debounceOnchageNumber = useCallback(
+    debounce(
+      (inputName, formatedNumber) => onChangeNumber(inputName, formatedNumber),
+      1000,
+    ),
+    [],
+  );
 
   const handleClickSelectCurrency = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -45,29 +58,37 @@ const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
     onClickCurrency();
   };
 
-  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
+    const formatedNumber = Number(value);
+    setInput(value);
     if (
-      value.length < MAX_CURRENCY_INPUT_LENGTH &&
+      formatedNumber >= 0 &&
+      // value.length < MAX_CURRENCY_INPUT_LENGTH &&
       FLOAT_STRING_REGEX.test(value)
     ) {
-      setInput(value);
-      const formatedNumber = Number(value);
-      onChangeNumber(formatedNumber);
+      debounceOnchageNumber(inputName, formatedNumber);
     }
   };
 
+  const handleFocus = () => {
+    onFocusInput(inputName);
+  };
+
   return (
-    <InputWraper onClick={onFocus}>
+    <InputWraper onClick={handleFocus}>
       <Label htmlFor={label}>{label}</Label>
       <Input
-        id={label}
-        type="text"
-        placeholder="0"
-        value={input}
+        type="number"
         autoComplete="off"
+        inputMode="decimal"
+        id={label}
+        name={name}
+        maxLength={MAX_CURRENCY_INPUT_LENGTH}
+        value={input}
+        pattern={`${FLOAT_STRING_REGEX}`}
         onChange={handleChange}
-        onFocus={onFocus}
+        onFocus={handleFocus}
         {...rest}
       />
       <SelectCurrencyButton

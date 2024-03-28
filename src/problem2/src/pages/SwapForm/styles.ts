@@ -49,4 +49,7 @@ export const ButtonSwap = styled.button`
   left: 50%;
   transform: translateX(-50%);
   cursor: pointer;
+  &:hover {
+    opacity: 0.65;
+  }
 `;

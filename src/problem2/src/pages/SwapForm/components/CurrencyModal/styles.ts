@@ -1,24 +1,50 @@
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
+
+const closeAnimation = keyframes`
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+`;
+
+const openAnimation = keyframes`
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+`;
 
 export const Overlay = styled.div<{
   $isOpen: boolean;
 }>`
-  ${(props) =>
+  opacity: 0;
+  animation: ${(props) =>
     props.$isOpen
-      ? `opacity: 1; visibility: visible;`
-      : `opacity: 0; visibility: hidden;`}
+      ? css`
+          ${openAnimation} 2s ease;
+        `
+      : css`
+          ${closeAnimation} 2s ease;
+        `};
+  animation-fill-mode: forwards;
   z-index: 1040;
   overflow: hidden;
-  display: flex;
   align-items: center;
   justify-content: center;
   background-color: rgba(244, 238, 255, 0.6);
   top: 0px;
   left: 0px;
+  display: flex;
+  position: fixed;
   height: 100%;
   width: 100%;
-  position: fixed;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s ease-in-out 0.5s;
   transform: translateX(0px);
 `;
 
@@ -86,6 +112,13 @@ export const InputWraper = styled.div`
   border-radius: 16px;
   box-shadow: rgba(74, 74, 104, 0.1) 0px 2px 2px -1px inset;
   color: rgb(244, 238, 255);
+  &:hover,
+  &:focus,
+  &:active {
+    box-shadow:
+      rgb(118, 69, 217) 0px 0px 0px 1px,
+      rgba(118, 69, 217, 0.6) 0px 0px 0px 4px;
+  }
   input {
     flex-grow: 2;
     background: transparent;

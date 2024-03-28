@@ -8,6 +8,8 @@ import { ReactComponent as SearchIcon } from "assets/icons/svg/others/search.svg
 import { ReactComponent as TickIcon } from "assets/icons/svg/others/tick.svg";
 import { mostPopularCurrencies } from "./constants";
 import { useCurrencies } from "./hooks";
+import { ICurrency } from "types";
+import { INPUT_NAME } from "pages/SwapForm";
 import {
   Modal,
   Overlay,
@@ -22,14 +24,16 @@ import {
 
 interface CurrencyModalProps {
   isOpen: boolean;
+  isSelectedFor: INPUT_NAME;
   currentCurrency?: string | null;
-  onSelectCurrency: (currency: string, price: number) => void;
-  closeModal: () => void;
+  close: () => void;
+  onSelectCurrency: (inputName: INPUT_NAME, currency: ICurrency) => void;
 }
 const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
-  isOpen = false,
+  isOpen,
+  isSelectedFor,
   currentCurrency = "",
-  closeModal,
+  close,
   onSelectCurrency,
 }) => {
   const [search, setSearch] = useState<string>("");
@@ -46,15 +50,21 @@ const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
   };
   const handleClose = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    closeModal();
+    close();
   };
   const handleClickButton = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const { currentTarget } = event;
-    const currency = currentTarget.getAttribute("data-currency");
+    const currencyName = currentTarget.getAttribute("data-currency");
     const price = currentTarget.getAttribute("data-price");
-    if (currency && price) onSelectCurrency(currency, Number(price));
-    closeModal();
+    const date = currentTarget.getAttribute("data-date");
+    if (currencyName && price && date)
+      onSelectCurrency(isSelectedFor, {
+        code: currencyName,
+        price: Number(price),
+        date: date,
+      });
+    close();
   };
 
   return (
@@ -81,6 +91,7 @@ const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
                 <PopularToken
                   data-currency={currency.code}
                   data-price={currency.price}
+                  data-date={currency.date}
                   key={currency.code}
                   onClick={handleClickButton}
                 >
@@ -101,6 +112,7 @@ const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
                   <FoundToken
                     data-currency={currency.code}
                     data-price={currency.price}
+                    data-date={currency.date}
                     $isCurrentCurrency={currency.code === currentCurrency}
                     key={currency.code}
                     onClick={handleClickButton}

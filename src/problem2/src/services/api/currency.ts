@@ -1,7 +1,7 @@
 import { mockingCurrencies } from "./mockingData";
-import { Currency } from "types";
+import { ICurrency } from "types";
 
-export const getCurrencies = (): Promise<Currency[]> => {
+export const getCurrencies = (): Promise<ICurrency[]> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockingCurrencies);

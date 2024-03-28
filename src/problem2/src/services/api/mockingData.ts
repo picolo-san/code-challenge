@@ -1,6 +1,6 @@
-import { Currency } from "types";
+import { ICurrency } from "types";
 
-export const mockingCurrencies: Currency[] = [
+export const mockingCurrencies: ICurrency[] = [
   {
     code: "BLUR",
     date: "2023-08-29T07:10:40.000Z",

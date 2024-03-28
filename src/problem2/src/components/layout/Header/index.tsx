@@ -8,7 +8,7 @@ const Header: React.FunctionComponent<React.HTMLAttributes<HTMLElement>> = (
 ) => {
   return (
     <HeaderWraper {...props}>
-      <Button size="small">Connect</Button>
+      <Button size="small">Connect Wallet</Button>
     </HeaderWraper>
   );
 };
