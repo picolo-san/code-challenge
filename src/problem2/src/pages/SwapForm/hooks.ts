@@ -28,44 +28,38 @@ export const useSwapForm = () => {
   const [isSwapping, setIsSwapping] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!isSwapping) {
-      setFormState((prevState) => {
-        const newTotalPrice =
-          prevState.receipt.price > 0
-            ? prevState.totalPrice / prevState.receipt.price
-            : 0;
-        return {
-          ...prevState,
-          receipt: {
-            ...prevState.receipt,
-            number: newTotalPrice,
-          },
-        };
-      });
-      setIsSwapping(false);
-    }
+    setFormState((prevState) => {
+      const newNumber =
+        prevState.receipt.price > 0
+          ? prevState.totalPrice / prevState.receipt.price
+          : prevState.receipt.number;
+      return {
+        ...prevState,
+        receipt: {
+          ...prevState.receipt,
+          number: newNumber,
+        },
+      };
+    });
   }, [formState.payment.currency, formState.payment.number]);
 
   useEffect(() => {
-    if (!isSwapping) {
-      setFormState((prevState) => {
-        const newTotalPrice =
-          prevState.payment.price > 0
-            ? prevState.totalPrice / prevState.payment.price
-            : 0;
-        return {
-          ...prevState,
-          payment: {
-            ...prevState.payment,
-            number: newTotalPrice,
-          },
-        };
-      });
-      setIsSwapping(false);
-    }
+    setFormState((prevState) => {
+      const newNumber =
+        prevState.payment.price > 0
+          ? prevState.totalPrice / prevState.payment.price
+          : prevState.payment.number;
+      return {
+        ...prevState,
+        payment: {
+          ...prevState.payment,
+          number: newNumber,
+        },
+      };
+    });
   }, [formState.receipt.currency, formState.receipt.number]);
 
-  const changeInputValue = (
+  const changeAmount = (
     inputName: INPUT_NAME.PAYMENT | INPUT_NAME.RECEIPT,
     value: number,
   ) => {
@@ -74,12 +68,18 @@ export const useSwapForm = () => {
         ...prevState[inputName],
         number: value,
       };
-      const newTotalPrice = newValue.price * newValue.number;
-      return { ...prevState, [inputName]: newValue, totalPrice: newTotalPrice };
+      const newTotalPrice = newValue.price
+        ? newValue.price * newValue.number
+        : prevState.totalPrice;
+      return {
+        ...prevState,
+        [inputName]: newValue,
+        totalPrice: newTotalPrice,
+      };
     });
   };
 
-  const changeCurrcenyInsideInput = (
+  const changeCurrency = (
     inputName: INPUT_NAME.PAYMENT | INPUT_NAME.RECEIPT,
     currency: ICurrency,
   ) => {
@@ -90,12 +90,15 @@ export const useSwapForm = () => {
         price: currency.price || 0,
       };
       const newTotalPrice = newValue.price * newValue.number;
-      return { ...prevState, [inputName]: newValue, totalPrice: newTotalPrice };
+      return {
+        ...prevState,
+        [inputName]: newValue,
+        totalPrice: newTotalPrice || prevState.totalPrice,
+      };
     });
   };
 
   const swapInputs = () => {
-    setIsSwapping(true);
     setFormState((prevState) => ({
       ...prevState,
       payment: prevState.receipt,
@@ -105,8 +108,8 @@ export const useSwapForm = () => {
 
   return {
     formState,
-    changeInputValue,
-    changeCurrcenyInsideInput,
+    changeAmount,
+    changeCurrency,
     swapInputs,
   };
 };

@@ -1,29 +1,41 @@
 import React, { useState, useCallback, FormEvent } from "react";
 import { createPortal } from "react-dom";
 import { debounce } from "lodash";
+import { twMerge } from "tailwind-merge";
 
-import CryptoIcon from "components/comon/CryptoIcon";
-import { ReactComponent as CrossIcon } from "assets/icons/svg/others/cross.svg";
-import { ReactComponent as SearchIcon } from "assets/icons/svg/others/search.svg";
-import { ReactComponent as TickIcon } from "assets/icons/svg/others/tick.svg";
 import { mostPopularCurrencies } from "./constants";
 import { useCurrencies } from "./hooks";
 import { ICurrency } from "types";
 import { INPUT_NAME } from "pages/SwapForm";
+import { MODAL_STATUS } from "pages/SwapForm";
+
+import { CryptoIcon, Heading, Span, Title } from "components/common";
+import { ReactComponent as CrossIcon } from "assets/icons/svg/others/cross.svg";
+import { ReactComponent as SearchIcon } from "assets/icons/svg/others/search.svg";
+import { ReactComponent as TickIcon } from "assets/icons/svg/others/tick.svg";
+
 import {
-  Modal,
-  Overlay,
-  Header,
-  InputWraper,
-  PopularToken,
-  PopularTokens,
-  FoundToken,
-  FoundTokens,
-  LoadingMessage,
+  modalStyles,
+  overlayStyles,
+  closedOverlayStyles,
+  openedOverlayStyles,
+  headerStyles,
+  inputWraperStyles,
+  inputStyles,
+  popularTokenStyles,
+  popularTokensStyles,
+  popularTokensTitleStyles,
+  foundTokenStyles,
+  foundTokensStyles,
+  foundTokenNameStyles,
+  foundTokenIconStyles,
+  foundTokenSubtitleStyles,
+  foundTokensTickIconStyles,
 } from "./styles";
+import { SubTitle } from "components/common";
 
 interface CurrencyModalProps {
-  isOpen: boolean;
+  isOpen: MODAL_STATUS;
   isSelectedFor: INPUT_NAME;
   currentCurrency?: string | null;
   close: () => void;
@@ -44,12 +56,17 @@ const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
     [],
   );
 
+  const resetSearchValue = () => {
+    setSearch("");
+  };
+
   const handleSearch = (event: FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     debounceSetSearch(value);
   };
   const handleClose = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    resetSearchValue();
     close();
   };
   const handleClickButton = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -64,71 +81,95 @@ const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
         price: Number(price),
         date: date,
       });
+    resetSearchValue();
     close();
   };
 
   return (
     <>
       {createPortal(
-        <Overlay $isOpen={isOpen}>
-          <Modal>
-            <Header>
-              <span>Select a token</span>
-              <button onClick={handleClose}>
-                <CrossIcon />
+        <div
+          className={twMerge(
+            overlayStyles,
+            isOpen === MODAL_STATUS.OPENED && openedOverlayStyles,
+            isOpen === MODAL_STATUS.CLOSED && closedOverlayStyles,
+            isOpen === MODAL_STATUS.FIRST_TIME_LOADED && "",
+          )}
+        >
+          <div role="dialog" className={modalStyles}>
+            <div className={`${headerStyles}`}>
+              <Heading className="text-colors-text" level={2}>
+                Select a token
+              </Heading>
+              <button className="hover:opacity-65" onClick={handleClose}>
+                <CrossIcon className="text-colors-primary h-6 w-6" />
               </button>
-            </Header>
-            <InputWraper>
-              <SearchIcon />
+            </div>
+            <div className={inputWraperStyles}>
+              <SearchIcon className="h-6 w-6" />
               <input
+                className={inputStyles}
                 type="text"
                 placeholder="Search name or paste address"
                 onChange={handleSearch}
               />
-            </InputWraper>
-            <PopularTokens>
+            </div>
+            <div className={`${popularTokensStyles}`}>
+              <Heading className={popularTokensTitleStyles} level={5}>
+                Popular tokens
+              </Heading>
               {mostPopularCurrencies.map((currency) => (
-                <PopularToken
+                <button
+                  className={popularTokenStyles}
                   data-currency={currency.code}
                   data-price={currency.price}
                   data-date={currency.date}
                   key={currency.code}
+                  disabled={currency.code === currentCurrency}
                   onClick={handleClickButton}
                 >
                   <CryptoIcon name={currency.code} />
-                  {currency.code}
-                </PopularToken>
+                  <Span>{currency.code}</Span>
+                </button>
               ))}
-            </PopularTokens>
-            <FoundTokens>
+            </div>
+            <div className={`${foundTokensStyles}`}>
               {currencies.length === 0 && (
-                <LoadingMessage>
-                  Fetching currencies information...
-                </LoadingMessage>
+                <SubTitle>Fetching currencies information...</SubTitle>
               )}
               {currencies.map((currency) => {
                 const regExp = new RegExp(`[${currency.code}]`, "gi");
                 return regExp.test(search) || search === "" ? (
-                  <FoundToken
+                  <button
+                    className={foundTokenStyles}
                     data-currency={currency.code}
                     data-price={currency.price}
                     data-date={currency.date}
-                    $isCurrentCurrency={currency.code === currentCurrency}
                     key={currency.code}
+                    disabled={currency.code === currentCurrency}
                     onClick={handleClickButton}
                   >
-                    <CryptoIcon name={currency.code} />
-                    <p>{currency.code}</p>
-                    <span>{currency.code}</span>
-                    {currency.code === currentCurrency && <TickIcon />}
-                  </FoundToken>
+                    <CryptoIcon
+                      className={foundTokenIconStyles}
+                      name={currency.code}
+                    />
+                    <Title className={foundTokenNameStyles}>
+                      {currency.code}
+                    </Title>
+                    <SubTitle className={foundTokenSubtitleStyles}>
+                      {currency.code}
+                    </SubTitle>
+                    {currency.code === currentCurrency && (
+                      <TickIcon className={foundTokensTickIconStyles} />
+                    )}
+                  </button>
                 ) : (
                   <></>
                 );
               })}
-            </FoundTokens>
-          </Modal>
-        </Overlay>,
+            </div>
+          </div>
+        </div>,
         document.body,
       )}
     </>

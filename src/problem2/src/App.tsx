@@ -2,17 +2,17 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import SwapForm from "pages/SwapForm";
 import Header from "components/layout/Header";
-import { Container } from "./styles";
+import { appStyles } from "./styles";
 
 const App = () => (
-  <Container className="App">
+  <div className={`App ${appStyles}`}>
     <Header />
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<SwapForm />} />
       </Routes>
     </BrowserRouter>
-  </Container>
+  </div>
 );
 
 export default App;

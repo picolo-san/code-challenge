@@ -1,18 +1,23 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { debounce } from "lodash";
+import { twMerge } from "tailwind-merge";
 
-import { formatCash } from "services/utils";
-import CryptoIcon from "components/comon/CryptoIcon";
-import { ReactComponent as ArrowDownIcon } from "assets/icons/svg/arrows/arrow-down.svg";
-import {
-  InputWraper,
-  Label,
-  Input,
-  Cash,
-  SelectCurrencyButton,
-} from "./styles";
 import { IAmount } from "types";
 import { INPUT_NAME } from "pages/SwapForm";
+import { formatCash } from "services/utils";
+
+import { CryptoIcon, Title, SubTitle, Heading } from "components/common";
+import { ReactComponent as ArrowDownIcon } from "assets/icons/svg/arrows/arrow-down.svg";
+
+import {
+  wraperStyles,
+  labelStyles,
+  inputStyles,
+  selectButtonStyles,
+  aCryptoChosenStyles,
+  noCryptoChosenStyles,
+  subTitleStyles,
+} from "./styles";
 
 interface CurrencyInputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -27,7 +32,7 @@ interface CurrencyInputProps
 const MAX_CURRENCY_INPUT_LENGTH = 20;
 const FLOAT_STRING_REGEX = /^[+-]?([0-9]*[.{0,1}])?[0-9]*$/;
 
-const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
+export const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
   label = "",
   amount,
   name,
@@ -40,7 +45,9 @@ const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
   const inputName = name;
 
   useEffect(() => {
-    setInput(String(amount.number));
+    if (amount.number > 0)
+      setInput(String(amount.number).substring(0, MAX_CURRENCY_INPUT_LENGTH));
+    else setInput("");
   }, [amount.number]);
 
   const debounceOnchageNumber = useCallback(
@@ -61,10 +68,10 @@ const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     const formatedNumber = Number(value);
-    setInput(value);
+    if (value.length < MAX_CURRENCY_INPUT_LENGTH) setInput(value);
     if (
       formatedNumber >= 0 &&
-      // value.length < MAX_CURRENCY_INPUT_LENGTH &&
+      value.length < MAX_CURRENCY_INPUT_LENGTH &&
       FLOAT_STRING_REGEX.test(value)
     ) {
       debounceOnchageNumber(inputName, formatedNumber);
@@ -76,14 +83,20 @@ const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
   };
 
   return (
-    <InputWraper onClick={handleFocus}>
-      <Label htmlFor={label}>{label}</Label>
-      <Input
+    <div className={wraperStyles} onClick={handleFocus}>
+      <label className={labelStyles} htmlFor={label}>
+        <Title>{label}</Title>
+      </label>
+      <input
+        className={inputStyles}
         type="number"
+        autoCorrect="off"
         autoComplete="off"
         inputMode="decimal"
+        placeholder="0"
         id={label}
         name={name}
+        minLength={1}
         maxLength={MAX_CURRENCY_INPUT_LENGTH}
         value={input}
         pattern={`${FLOAT_STRING_REGEX}`}
@@ -91,28 +104,35 @@ const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
         onFocus={handleFocus}
         {...rest}
       />
-      <SelectCurrencyButton
+      <button
+        className={twMerge(
+          selectButtonStyles,
+          !!amount.currency ? aCryptoChosenStyles : noCryptoChosenStyles,
+        )}
         onClick={handleClickSelectCurrency}
-        $isCrytoChosen={!!amount.currency}
       >
         {amount.currency ? (
           <>
             <CryptoIcon name={amount.currency} />
-            {amount.currency}
-            <ArrowDownIcon />
+            <Heading className="text-colors-text" level={4}>
+              {amount.currency}
+            </Heading>
+            <ArrowDownIcon className="text-colors-text h-2 w-3" />
           </>
         ) : (
           <>
-            Select token
-            <ArrowDownIcon />
+            <Heading className="text-colors-invertedContrast" level={4}>
+              Select token
+            </Heading>
+            <ArrowDownIcon className="text-colors-invertedContrast h-2 w-3" />
           </>
         )}
-      </SelectCurrencyButton>
+      </button>
       {amount.currency && amount.number > 0 && amount.price && (
-        <Cash>${formatCash(amount.number * amount.price)} USD</Cash>
+        <SubTitle className={subTitleStyles}>
+          {formatCash(amount.number * amount.price)} USD
+        </SubTitle>
       )}
-    </InputWraper>
+    </div>
   );
 };
-
-export default CurrencyInput;

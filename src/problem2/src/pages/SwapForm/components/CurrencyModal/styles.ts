@@ -1,271 +1,44 @@
-import styled, { keyframes, css } from "styled-components";
+export const overlayStyles =
+  "z-50 flex fixed h-0 w-0 bg-colors-text99 top-0 left-0 overflow-hidden justify-center items-center opacity-0";
 
-const closeAnimation = keyframes`
-  from {
-    opacity: 1;
-  }
+export const closedOverlayStyles =
+  "animate-[closeModal_0.3s_ease-in-out_forwards]";
 
-  to {
-    opacity: 0;
-  }
-`;
+export const openedOverlayStyles =
+  "animate-[openModal_0.3s_ease-in-out_forwards]";
 
-const openAnimation = keyframes`
-  from {
-    opacity: 0;
-  }
+export const modalStyles = "bg-colors-backgroundAlt w-112 rounded-3xl 2xs:mx-2";
 
-  to {
-    opacity: 1;
-  }
-`;
+export const headerStyles =
+  "px-6 py-3 flex justify-between border-b border-b-colors-cardBorder h-16 items-center";
 
-export const Overlay = styled.div<{
-  $isOpen: boolean;
-}>`
-  opacity: 0;
-  animation: ${(props) =>
-    props.$isOpen
-      ? css`
-          ${openAnimation} 2s ease;
-        `
-      : css`
-          ${closeAnimation} 2s ease;
-        `};
-  animation-fill-mode: forwards;
-  z-index: 1040;
-  overflow: hidden;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(244, 238, 255, 0.6);
-  top: 0px;
-  left: 0px;
-  display: flex;
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  transition: opacity 0.3s ease-in-out 0.5s;
-  transform: translateX(0px);
-`;
+export const inputWraperStyles =
+  "mt-6 mx-6 mb-4 flex border-1 bg-colors-input border-colors-inputSecondary rounded-2xl h-10 items-center px-3 gap-3 text-colors-textSubtle focus-within:shadow-focus";
 
-export const Modal = styled.div`
-  background-color: #27262c;
-  width: 100%;
-  overflow: hidden;
-  display: grid;
-  row-gap: 16px;
-  box-sizing: border-box;
-  padding: 20px 20px 0px 20px;
-  flex-direction: column;
-  position: relative;
-  border-radius: 20px;
-  width: 417.778px;
-  grid-template-rows: 24px 40px 92px auto;
-  height: 63vh;
-  max-height: 670px;
-  min-height: 356px;
-`;
+export const inputStyles =
+  "bg-transparent text-colors-textSubtle flex-grow border-none outline-none placeholder:text-colors-textSubtle";
 
-export const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  height: auto;
-  color: rgb(244, 238, 255);
-  span {
-    font-weight: 600;
-    line-height: 1.1;
-    font-size: 20px;
-  }
-  button {
-    height: 24px;
-    width: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    outline: none;
-    cursor: pointer;
-    background-color: transparent;
-    border: none;
-    color: rgb(31, 199, 212);
-  }
-`;
+export const popularTokensStyles =
+  "grid grid-rows-[1.25rem_auto_auto] grid-cols-4 mx-6 gap-y-2 gap-x-2  mb-4";
 
-export const InputWraper = styled.div`
-  display: flex;
-  height: 40px;
-  align-items: center;
-  width: 100%;
-  white-space: nowrap;
-  outline: none;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  appearance: none;
-  font-weight: 485;
-  font-size: 16px;
-  transition: border 100ms ease 0s;
-  box-sizing: border-box;
-  padding: 0px 12px;
-  gap: 6px;
-  background-color: rgb(55, 47, 71);
-  border: 1px solid rgb(38, 33, 48);
-  border-radius: 16px;
-  box-shadow: rgba(74, 74, 104, 0.1) 0px 2px 2px -1px inset;
-  color: rgb(244, 238, 255);
-  &:hover,
-  &:focus,
-  &:active {
-    box-shadow:
-      rgb(118, 69, 217) 0px 0px 0px 1px,
-      rgba(118, 69, 217, 0.6) 0px 0px 0px 4px;
-  }
-  input {
-    flex-grow: 2;
-    background: transparent;
-    border: none;
-    outline: none;
-    font-weight: 485;
-    font-size: 16px;
-    color: #fff;
-    display: flex;
-    align-items: start;
-    padding: 0px;
-    box-sizing: border-box;
-    &::placeholder {
-      color: rgb(184, 173, 210);
-    }
-  }
-  svg {
-    height: 20px;
-    width: 20px;
-    color: rgb(184, 173, 210);
-  }
-`;
+export const popularTokensTitleStyles = "row-start-1 col-start-1 col-span-4";
 
-export const PopularToken = styled.button`
-  background-color: transparent;
-  padding: 4px 12px 4px 4px;
-  border-radius: 16px;
-  gap: 6px;
-  svg:nth-child(2) {
-    margin-left: 6px;
-  }
-  &:hover {
-    background-color: rgb(19, 19, 19);
-  }
-  &:active {
-    background-color: rgb(19, 19, 19);
-  }
-  align-items: center;
-  opacity: 1;
-  color: rgb(244, 238, 255);
-  cursor: pointer;
-  outline: none;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  font-size: 20px;
-  font-weight: 535;
-  width: auto;
-  height: 36px;
-  box-shadow: rgba(34, 34, 34, 0.04) 0px 0px 10px 0px;
-  visibility: visible;
-  animation: auto ease 0s 1 normal none running none;
-  display: flex;
-  line-height: 24px;
-  align-self: center;
-  margin: 4px;
-`;
+export const popularTokenStyles =
+  "col-span-1 h-9 flex justify-start items-center gap-x-2 rounded-lg border border-colors-dropdown px-2 hover:bg-colors-background disabled:opacity-50 disabled:pointer-events-none";
 
-export const PopularTokens = styled.div`
-  width: 100%;
-  display: flex;
-  padding: 0px;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 4px;
-  flex-wrap: wrap;
-  margin: -4px;
-`;
+export const foundTokensStyles =
+  "flex flex-col overflow-y-auto overflow-x-hidden h-96 mb-6";
 
-export const FoundTokens = styled.div`
-  height: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
-  display: flex;
-  flex-direction: column;
-  overflow-y: scroll;
-  margin: 0px -20px;
-  align-self: stretch;
-  background-color: transparent;
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #b8add2;
-    border-radius: 8px;
-  }
-  &::-webkit-scrollbar-track {
-    box-shadow: inset 0 0 5px #372f47;
-    border-radius: 10px;
-  }
-`;
+export const foundTokenStyles =
+  "px-6 py-2 grid grid-rows-2 grid-cols-[1.5rem_auto_1rem] h-auto gap-x-4 hover:bg-colors-background disabled:opacity-50 disabled:pointer-events-none";
 
-export const FoundToken = styled.button<{
-  $isCurrentCurrency: boolean;
-}>`
-  ${(props) =>
-    props.$isCurrentCurrency &&
-    `pointer-events: none;
-    opacity: 0.4;`}
-  background-color: transparent;
-  padding: 4px 20px;
-  display: grid;
-  grid-template-columns: auto minmax(auto, 1fr) minmax(0px, 72px);
-  grid-template-rows: 24px 24px;
-  gap: 16px;
-  cursor: pointer;
-  border: none;
-  outline: none;
-  row-gap: 0px;
-  &:hover {
-    background-color: rgb(19, 19, 19);
-  }
-  img {
-    grid-row: 1 / span 2;
-    align-self: center;
-    height: 36px;
-    width: 36px;
-  }
-  p {
-    font-size: 16px;
-    color: rgb(244, 238, 255);
-    font-weight: 485;
-    margin: 0;
-    grid-row: 1/2;
-    grid-column: 2/3;
-    justify-self: start;
-  }
-  span {
-    font-weight: 485;
-    font-size: 12px;
-    color: rgb(184, 173, 210);
-    grid-row: 2/3;
-    grid-column: 2/3;
-    justify-self: start;
-  }
-  svg:last-child {
-    grid-column: 3 / span 1;
-    grid-row: 1 / span 2;
-    align-self: end;
-    height: 20px;
-    width: 20px;
-    color: rgb(31, 199, 212);
-    align-self: center;
-    justify-self: end;
-  }
-`;
+export const foundTokenIconStyles = "row-start-1 row-end-3 place-self-center";
 
-export const LoadingMessage = styled.p`
-  font-weight: 485;
-  font-size: 14px;
-  color: rgb(155, 155, 155);
-  text-align: center;
-`;
+export const foundTokenNameStyles =
+  "row-start-1 row-end-2 col-start-2 col-end-3 justify-self-start self-center";
+
+export const foundTokenSubtitleStyles =
+  "row-start-2 row-end-3 col-start-2 col-end-3 justify-self-start self-center";
+
+export const foundTokensTickIconStyles =
+  "h-6 w-6 row-start-1 row-end-3  col-start-3 col-span-1 text-colors-primary";
