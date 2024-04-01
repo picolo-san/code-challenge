@@ -4,24 +4,48 @@ interface WalletBalance {
   currency: string;
   amount: number;
 }
-// this inteface could extend WalletBalance
+
+// the "FormattedWalletBalance" inteface could extend "WalletBalance"
 interface FormattedWalletBalance {
   currency: string;
   amount: number;
   formatted: string;
 }
-// seems like props is unused in the whole component. We should remove it.
+
+class Datasource {
+  // TODO: Implement datasource class
+}
+
+// Interface "BoxProps" is not imported.
+// Make sure "BoxProps" is extended from React.HTMLAttributes<HTMLDivElement> since it used "...rest" to pass into div element.
 interface Props extends BoxProps {}
-// init Props interface twices this will not cause any warning but it is uncessary.
+
+// The "Props" is assigned twice in here. Chose one or the other way.
 const WalletPage: React.FC<Props> = (props: Props) => {
-  const { children, ...rest } = props; // unused "children" props it will not cause bug but typescript may raise it
+  const { children, ...rest } = props;
+  //"useWalletBalances" hook was not imported.
   const balances = useWalletBalances();
-  const prices = usePrices();
-
-  //using any type as a workaround for avoid TS warning, but if we using any type why we need TS at the first place ?
-  //this could be a string type
-  // this could be an utility function.
-
+  //"useState" was not imported and there is not type declaration for "prices" in here.
+  //It is really confusing  "prices" is supposed to be an array but it is a object by default.
+  const [prices, setPrices] = useState({});
+  //We can combie the state "prices" and the below useEffect hook to create a custom hook call "usePrices()"
+  useEffect(() => {
+    const datasource = new Datasource(
+      "https://interview.switcheo.com/prices.json"
+    );
+    datasource
+      .getPrices()
+      .then((prices) => {
+        setPrices(prices);
+      })
+      .catch((error) => {
+        console.err(error);
+      });
+  }, []);
+  // This "getPriority" can stand alone please consider to take it as a ultility function
+  // Avoid typpe "any" as much as possible
+  // Seems like parameter "blockchain" is link to "WalletBalance". However there is no "blockchain" property in "WalletBalance" at line 69.
+  // This is may be the "currency" inside "WalletBalance". Consider to change it into "currency".
   const getPriority = (blockchain: any): number => {
     switch (blockchain) {
       case "Osmosis":
@@ -39,17 +63,14 @@ const WalletPage: React.FC<Props> = (props: Props) => {
     }
   };
 
-  // no import statement for useMemo hook.
-  // this a quite long hook, please consider to turn it into a custom hook.
+  //no "useMemo" was imported
   const sortedBalances = useMemo(() => {
     return balances
       .filter((balance: WalletBalance) => {
-        //there is no blockchain property in the "WalletBalance" interface.
+        // The "balancePrioriy" in unused and TS may raise error since there is no "blockchain" property inside "WalletBalance".
         const balancePriority = getPriority(balance.blockchain);
-        // un-defined variable.
-        // this shoule be the balancePriority.
+        // "lhsPriority" is not declared, it may be the above "balancePriority" variable.
         if (lhsPriority > -99) {
-          // magic number
           if (balance.amount <= 0) {
             return true;
           }
@@ -57,7 +78,7 @@ const WalletPage: React.FC<Props> = (props: Props) => {
         return false;
       })
       .sort((lhs: WalletBalance, rhs: WalletBalance) => {
-        //there is no blockchain property in the "WalletBalance" interface.
+        //again TS may raise error since there is no "blockchain" property inside "WalletBalance".
         const leftPriority = getPriority(lhs.blockchain);
         const rightPriority = getPriority(rhs.blockchain);
         if (leftPriority > rightPriority) {
@@ -66,28 +87,29 @@ const WalletPage: React.FC<Props> = (props: Props) => {
           return 1;
         }
       });
-    //no depency "prices" inside the hook.
-    // need to remove this "prices" dependency.
-    // shadowing comparing this may not run again when balances change its item.
-  }, [balances, prices]);
-
-  // this is a format data function could defnitely put it inside the above hook.
+  }, [balances, prices]); //"prices" in here is not related to the calculation should not be a dependency.
+  //Another heavy calculation to format band return the last result "formattedBalances".
+  //We should put this to the inside the above "useMemo";
   const formattedBalances = sortedBalances.map((balance: WalletBalance) => {
     return {
       ...balance,
       formatted: balance.amount.toFixed(),
     };
   });
-  // render function please, it's really hard to this at a large component. In this case, please turn this into JSX
+  //"render function" avoid this as much as posible since it is really hard to main tain the code with multi render functions.
+  //Just use JSX please
+  //TS may raise error since sortedBalances is just a "WalletBalance[]" type.
+  //Cause at line 115, "balance" has no "formatted" property.
+  //Should change the "sortedBalances" at line 104 into "formattedBalance" at line 93.
   const rows = sortedBalances.map(
     (balance: FormattedWalletBalance, index: number) => {
       const usdValue = prices[balance.currency] * balance.amount;
       return (
-        //no import statement for this compnent
         <WalletRow
-          // no import statement for class name for styling
+          //There is no "classes" to be defined.
           className={classes.row}
-          key={index} // key should not be index dude the index may change when the a new array is used.
+          //the sortedBalances is an array that will be reorder index alot should not set the index as key in here may be changed into balance currency.
+          key={index}
           amount={balance.amount}
           usdValue={usdValue}
           formattedAmount={balance.formatted}
@@ -95,8 +117,8 @@ const WalletPage: React.FC<Props> = (props: Props) => {
       );
     }
   );
-  // {... rest} object is put into div may be we don't need props in here
+
   return <div {...rest}>{rows}</div>;
 };
 
-// no export WalletPage component
+// there is no export statement in here

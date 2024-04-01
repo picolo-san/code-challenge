@@ -40,6 +40,7 @@ interface CurrencyModalProps {
   close: () => void;
   onSelectCurrency: (inputName: INPUT_NAME, currency: ICurrency) => void;
 }
+
 export const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
   isOpen,
   isSelectedFor,

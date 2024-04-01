@@ -6,4 +6,8 @@ export interface FormattedWalletBalance extends WalletBalance {
   formatted: string;
 }
 
-export interface Price {}
+export interface Price {
+  currency: string;
+  date: string;
+  price: number;
+}
