@@ -9,3 +9,9 @@ export interface ICurrency {
   date: string;
   price?: number;
 }
+
+export enum MODAL_STATUS {
+  OPENED,
+  CLOSED,
+  FIRST_TIME_LOADED,
+}

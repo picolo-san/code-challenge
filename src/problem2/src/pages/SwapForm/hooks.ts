@@ -25,7 +25,6 @@ const initialState: ISwapFormState = {
 
 export const useSwapForm = () => {
   const [formState, setFormState] = useState<ISwapFormState>(initialState);
-  const [isSwapping, setIsSwapping] = useState<boolean>(false);
 
   useEffect(() => {
     setFormState((prevState) => {
@@ -83,18 +82,32 @@ export const useSwapForm = () => {
     inputName: INPUT_NAME.PAYMENT | INPUT_NAME.RECEIPT,
     currency: ICurrency,
   ) => {
+    const newPrice = currency.price || 0;
     setFormState((prevState) => {
-      const newValue = {
-        ...prevState[inputName],
-        currency: currency.code,
-        price: currency.price || 0,
-      };
-      const newTotalPrice = newValue.price * newValue.number;
-      return {
-        ...prevState,
-        [inputName]: newValue,
-        totalPrice: newTotalPrice || prevState.totalPrice,
-      };
+      if (newPrice > 0 && prevState[inputName].number === 0) {
+        const newValue = {
+          number: prevState.totalPrice / newPrice,
+          currency: currency.code,
+          price: newPrice,
+        };
+        return {
+          ...prevState,
+          [inputName]: newValue,
+        };
+      } else if (newPrice > 0 && prevState[inputName].number > 0) {
+        const newValue = {
+          ...prevState[inputName],
+          currency: currency.code,
+          price: newPrice,
+        };
+        return {
+          ...prevState,
+          [inputName]: newValue,
+          totalPrice: newPrice * newValue.number,
+        };
+      } else {
+        return { ...prevState };
+      }
     });
   };
 

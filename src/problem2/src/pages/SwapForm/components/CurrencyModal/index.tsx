@@ -5,9 +5,8 @@ import { twMerge } from "tailwind-merge";
 
 import { mostPopularCurrencies } from "./constants";
 import { useCurrencies } from "./hooks";
-import { ICurrency } from "types";
+import { ICurrency, MODAL_STATUS } from "types";
 import { INPUT_NAME } from "pages/SwapForm";
-import { MODAL_STATUS } from "pages/SwapForm";
 
 import { CryptoIcon, Heading, Span, Title } from "components/common";
 import { ReactComponent as CrossIcon } from "assets/icons/svg/others/cross.svg";
@@ -41,7 +40,7 @@ interface CurrencyModalProps {
   close: () => void;
   onSelectCurrency: (inputName: INPUT_NAME, currency: ICurrency) => void;
 }
-const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
+export const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
   isOpen,
   isSelectedFor,
   currentCurrency = "",
@@ -60,6 +59,11 @@ const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
     setSearch("");
   };
 
+  const handleClickOutside = (event: React.MouseEvent<HTMLDivElement>) => {
+    let { target } = event;
+    let { currentTarget } = event;
+    if (target === currentTarget) close();
+  };
   const handleSearch = (event: FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     debounceSetSearch(value);
@@ -95,6 +99,7 @@ const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
             isOpen === MODAL_STATUS.CLOSED && closedOverlayStyles,
             isOpen === MODAL_STATUS.FIRST_TIME_LOADED && "",
           )}
+          onClick={handleClickOutside}
         >
           <div role="dialog" className={modalStyles}>
             <div className={`${headerStyles}`}>
@@ -175,5 +180,3 @@ const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
     </>
   );
 };
-
-export default CurrencyModal;

@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 
-import { ICurrency } from "types";
+import { ICurrency, MODAL_STATUS } from "types";
 import { useSwapForm } from "./hooks";
 
-import { CurrencyInput } from "./components";
+import { CurrencyInput, CurrencyModal } from "./components";
 import { Heading, Button } from "components/common";
 import { ReactComponent as SwapDownIcon } from "assets/icons/svg/arrows/swap-down.svg";
-import CurrencyModal from "./components/CurrencyModal";
 
 import {
   containerStyles,
@@ -20,13 +19,13 @@ export enum INPUT_NAME {
   RECEIPT = "receipt",
 }
 
-export enum MODAL_STATUS {
-  OPENED,
-  CLOSED,
-  FIRST_TIME_LOADED,
+interface SwapFormProps {
+  openWalletModal: () => void;
 }
 
-const SwapForm = () => {
+export const SwapForm: React.FunctionComponent<SwapFormProps> = ({
+  openWalletModal,
+}) => {
   const [currentFocusInput, setCurrentFocusInput] = useState<INPUT_NAME>(
     INPUT_NAME.PAYMENT,
   );
@@ -87,7 +86,7 @@ const SwapForm = () => {
           <SwapDownIcon className="h-4 w-4" />
         </Button>
       </form>
-      <Button isFullWidth size="big">
+      <Button onClick={openWalletModal} isFullWidth size="big">
         Connect Wallet
       </Button>
       <CurrencyModal
@@ -100,5 +99,3 @@ const SwapForm = () => {
     </div>
   );
 };
-
-export default SwapForm;
