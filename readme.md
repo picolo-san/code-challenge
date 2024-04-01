@@ -12,4 +12,6 @@ In the project directory, to run test for problem #2 you can run:
     npm install
     npm run start
 
+Or just visit here for online demo: https://my-swap.vercel.app/
+
 In the project directory, open "src/problem3" for checking the code of problem #3.
