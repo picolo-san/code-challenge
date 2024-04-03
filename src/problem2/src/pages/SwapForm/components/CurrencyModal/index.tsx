@@ -1,4 +1,4 @@
-import React, { useState, useCallback, FormEvent } from "react";
+import React, { useState, useCallback, FormEvent, useRef } from "react";
 import { createPortal } from "react-dom";
 import { debounce } from "lodash";
 import { twMerge } from "tailwind-merge";
@@ -50,6 +50,7 @@ export const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
 }) => {
   const [search, setSearch] = useState<string>("");
   const currencies = useCurrencies();
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const debounceSetSearch = useCallback(
     debounce((value) => setSearch(value), 1000),
@@ -58,12 +59,16 @@ export const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
 
   const resetSearchValue = () => {
     setSearch("");
+    if (searchRef.current) searchRef.current.value = "";
   };
 
   const handleClickOutside = (event: React.MouseEvent<HTMLDivElement>) => {
     let { target } = event;
     let { currentTarget } = event;
-    if (target === currentTarget) close();
+    if (target === currentTarget) {
+      close();
+      resetSearchValue();
+    }
   };
   const handleSearch = (event: FormEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
@@ -114,6 +119,7 @@ export const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
             <div className={inputWraperStyles}>
               <SearchIcon className="h-6 w-6" />
               <input
+                ref={searchRef}
                 className={inputStyles}
                 type="text"
                 placeholder="Search name or paste address"
@@ -144,8 +150,7 @@ export const CurrencyModal: React.FunctionComponent<CurrencyModalProps> = ({
                 <SubTitle>Fetching currencies information...</SubTitle>
               )}
               {currencies.map((currency) => {
-                const regExp = new RegExp(`[${currency.code}]`, "gi");
-                return regExp.test(search) || search === "" ? (
+                return currency.code.includes(search) || search === "" ? (
                   <button
                     className={foundTokenStyles}
                     data-currency={currency.code}

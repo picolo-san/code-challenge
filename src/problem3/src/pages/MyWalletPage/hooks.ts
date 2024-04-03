@@ -1,6 +1,6 @@
 import { useMemo, useEffect, useState } from "react";
 
-import datasource from "services/api";
+import Datasource from "services/api";
 import {
   getPriorityBlances,
   sortBalances,
@@ -20,23 +20,23 @@ export const useFormattedBalances = (balances: WalletBalance[]) => {
 
 //moving datasource implementation to services/api
 export const usePrices = () => {
-  const [prices, setPrices] = useState<Price[]>([]);
+  const [prices, setPrices] = useState<Price[]>([]); //set default price to array and have Price[] type
   const [isLoadingPrices, setIsLoadingPrices] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   useEffect(() => {
     setIsLoadingPrices(true);
-    datasource
-      .getPrices()
+    Datasource.getPrices()
       .then((prices: Price[]) => {
         setPrices(prices);
         setIsLoadingPrices(false);
       })
       .catch((error: Error) => {
-        setError(error.message);
+        setErrorMessage(error.message);
         setIsLoadingPrices(false);
       });
   }, []);
-  return { prices, isLoadingPrices, error };
+  return { prices, isLoadingPrices, errorMessage };
 };
 
 //just a mocking custom hook will return a list of walletbalances.

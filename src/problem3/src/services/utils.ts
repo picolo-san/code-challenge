@@ -3,8 +3,8 @@ import { FormattedWalletBalance, WalletBalance } from "types";
 
 const MINIMUM_PRIORITY = -99;
 
-const getPriority = (currency: string): number => {
-  switch (currency) {
+const getPriority = (blockchain: WalletBalance["blockchain"]): number => {
+  switch (blockchain) {
     case "Osmosis":
       return 100;
     case "Ethereum":
@@ -25,12 +25,13 @@ export const getPriorityBlances = (
 ): WalletBalance[] =>
   balances.filter(
     (balance) =>
-      getPriority(balance.currency) > MINIMUM_PRIORITY && balance.amount <= 0
+      getPriority(balance.blockchain) > MINIMUM_PRIORITY && balance.amount <= 0
   );
 
 export const sortBalances = (balance: WalletBalance[]): WalletBalance[] =>
-  balance.sort((lhs: WalletBalance, rhs: WalletBalance) =>
-    getPriority(lhs.currency) > getPriority(rhs.currency) ? -1 : 1
+  balance.sort(
+    (lhs: WalletBalance, rhs: WalletBalance) =>
+      getPriority(rhs.blockchain) - getPriority(lhs.blockchain)
   );
 
 export const formatBalances = (

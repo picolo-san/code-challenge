@@ -1,8 +1,8 @@
 import { BASE_URLS } from "configs";
 import { Price } from "types";
 
-class Datasource {
-  url: string;
+class ApiClient {
+  private url: string;
 
   constructor(url: string) {
     this.url = url;
@@ -13,6 +13,6 @@ class Datasource {
   };
 }
 
-const datasource = new Datasource(BASE_URLS.GET_PRICES);
+const Datasource = new ApiClient(BASE_URLS.GET_PRICES);
 
-export default datasource;
+export default Datasource;

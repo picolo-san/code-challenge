@@ -18,26 +18,30 @@ export const WalletPage: React.FunctionComponent<WalletPageProps> = ({
   const balances: WalletBalance[] = useWalletBalances(); //since i consider this as a blind custom hook just expect its outcome to be a "WalletBalance[]"
   const formattedBalances: FormattedWalletBalance[] =
     useFormattedBalances(balances); // bring all logic for formatting "WalletBalance" into a custom hook
-  const { prices, isLoadingPrices, error } = usePrices(); // pull state "prices" and useEffect to getPrices into a custom hook.
+  const { prices, isLoadingPrices, errorMessage } = usePrices(); // pull state "prices" and useEffect to getPrices into a custom hook.
 
-  const getPrice = (currency: FormattedWalletBalance["currency"]): number => 
-     prices?.find((price:Price) => price.currency === currency)?.price || 0;
-  ;
-
+  const getPrice = (currency: FormattedWalletBalance["currency"]): number =>
+    prices?.find((price: Price) => price.currency === currency)?.price || 0;
   return (
     <div {...rest}>
       {isLoadingPrices && <>Loading...</>}
-      {error ? <>{error}</>: 
-      {
-        formattedBalances.map((formattedBalance: FormattedWalletBalance) => (
-        <WalletRow
-          className={classes.row}
-          key={formattedBalance.currency} // change the "index" into formattedBalance.currency as key.
-          amount={formattedBalance.amount}
-          usdValue={getPrice(formattedBalance.currency) * formattedBalance.amount}
-          formattedAmount={formattedBalance.formatted}
-        />
-      ))}}
+      {error ? (
+        <p>{errorMessage}</p>
+      ) : (
+        <>
+          {formattedBalances.map((formattedBalance: FormattedWalletBalance) => (
+            <WalletRow
+              className={classes.row}
+              key={formattedBalance.currency} // change the "index" into formattedBalance.currency as key.
+              amount={formattedBalance.amount}
+              usdValue={
+                getPrice(formattedBalance.currency) * formattedBalance.amount
+              }
+              formattedAmount={formattedBalance.formatted}
+            />
+          ))}
+        </>
+      )}
     </div>
   );
 };

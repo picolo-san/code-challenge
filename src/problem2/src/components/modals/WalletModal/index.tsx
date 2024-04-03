@@ -5,6 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { MODAL_STATUS } from "types";
 
 import { Heading, Paragraph, Span, Title } from "components/common";
+import { ReactComponent as CrossIcon } from "assets/icons/svg/others/cross.svg";
 
 import {
   modalStyles,
@@ -31,6 +32,10 @@ export const WalletModal: React.FunctionComponent<WalletModalProps> = ({
     if (target === currentTarget) close();
   };
 
+  const handleClose = () => {
+    close();
+  };
+
   return (
     <>
       {createPortal(
@@ -44,9 +49,14 @@ export const WalletModal: React.FunctionComponent<WalletModalProps> = ({
           onClick={handleClickOutside}
         >
           <div role="dialog" className={modalStyles}>
-            <Heading className="text-xl font-semibold" level={4}>
-              Connect Wallet
-            </Heading>
+            <div className="flex justify-between">
+              <Heading className="text-xl font-semibold" level={4}>
+                Connect Wallet
+              </Heading>
+              <button className="hover:opacity-65" onClick={handleClose}>
+                <CrossIcon className="text-colors-primary h-6 w-6" />
+              </button>
+            </div>
             <Paragraph className="text-sm text-colors-textSubtle">
               Start by connecting with one of the wallets below. Be sure to
               store your private keys or seed phrase securely. Never share them

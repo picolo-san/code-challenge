@@ -21,7 +21,7 @@ export const Button: React.FunctionComponent<ButtonProps> = ({
   return (
     <button
       className={twMerge(
-        `${size === "big" ? "h-12" : "h-9"} ${isFullWidth ? "w-full" : "w-auto"}`,
+        `${size === "big" ? "h-12" : "h-8"} ${isFullWidth ? "w-full" : "w-auto"}`,
         buttonStyles,
         className,
       )}

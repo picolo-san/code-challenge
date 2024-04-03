@@ -45,7 +45,7 @@ const WalletPage: React.FC<Props> = (props: Props) => {
   // This "getPriority" can stand alone please consider to take it as a ultility function
   // Avoid typpe "any" as much as possible
   // Seems like parameter "blockchain" is link to "WalletBalance". However there is no "blockchain" property in "WalletBalance" at line 69.
-  // This is may be the "currency" inside "WalletBalance". Consider to change it into "currency".
+  // This is may be there is a "blockchain" inside "WalletBalance". Consider to add "blockchain" into WalletBalance.
   const getPriority = (blockchain: any): number => {
     switch (blockchain) {
       case "Osmosis":

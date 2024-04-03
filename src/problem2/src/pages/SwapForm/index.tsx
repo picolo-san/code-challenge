@@ -2,10 +2,12 @@ import React, { useState } from "react";
 
 import { ICurrency, MODAL_STATUS } from "types";
 import { useSwapForm } from "./hooks";
+import { formatCash } from "services/utils";
 
-import { CurrencyInput, CurrencyModal } from "./components";
-import { Heading, Button } from "components/common";
+import { CurrencyInput, CurrencyModal, SettingModal } from "./components";
+import { Heading, Button, Collapse, Span } from "components/common";
 import { ReactComponent as SwapDownIcon } from "assets/icons/svg/arrows/swap-down.svg";
+import { ReactComponent as EqualIcon } from "assets/icons/svg/others/equal.svg";
 
 import {
   containerStyles,
@@ -33,6 +35,10 @@ export const SwapForm: React.FunctionComponent<SwapFormProps> = ({
   const [isModalOpen, setModalOpen] = useState<MODAL_STATUS>(
     MODAL_STATUS.FIRST_TIME_LOADED,
   );
+  const isShowSwapDetail =
+    formState.payment.currency &&
+    formState.receipt.currency &&
+    formState.payment.currency !== formState.receipt.currency;
 
   const toggleModal = () =>
     setModalOpen((prevState) =>
@@ -61,9 +67,10 @@ export const SwapForm: React.FunctionComponent<SwapFormProps> = ({
 
   return (
     <div className={containerStyles}>
-      <Heading level={2} className={headingStyles}>
-        Swap
-      </Heading>
+      <div className={headingStyles}>
+        <Heading level={2}>Swap</Heading>
+        <SettingModal />
+      </div>
       <form className={formStyles}>
         <CurrencyInput
           label="You pay"
@@ -86,6 +93,20 @@ export const SwapForm: React.FunctionComponent<SwapFormProps> = ({
           <SwapDownIcon className="h-4 w-4" />
         </Button>
       </form>
+      {isShowSwapDetail && (
+        <Collapse>
+          <Span>
+            1&nbsp;&nbsp;
+            {formState.payment.currency}
+          </Span>
+          <EqualIcon />
+          <Span className="text-colors-warning">
+            {formatCash(formState.payment.price / formState.receipt.price)}
+            &nbsp;&nbsp;
+            {formState.receipt.currency}
+          </Span>
+        </Collapse>
+      )}
       <Button onClick={openWalletModal} isFullWidth size="big">
         Connect Wallet
       </Button>

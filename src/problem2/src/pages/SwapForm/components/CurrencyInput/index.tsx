@@ -7,7 +7,6 @@ import { INPUT_NAME } from "pages/SwapForm";
 import { formatCash } from "services/utils";
 
 import { CryptoIcon, Title, SubTitle, Heading } from "components/common";
-import { ReactComponent as ArrowDownIcon } from "assets/icons/svg/arrows/arrow-down.svg";
 
 import {
   wraperStyles,
@@ -117,14 +116,12 @@ export const CurrencyInput: React.FunctionComponent<CurrencyInputProps> = ({
             <Heading className="text-colors-text" level={4}>
               {amount.currency}
             </Heading>
-            <ArrowDownIcon className="text-colors-text h-2 w-3" />
           </>
         ) : (
           <>
             <Heading className="text-colors-invertedContrast" level={4}>
               Select token
             </Heading>
-            <ArrowDownIcon className="text-colors-invertedContrast h-2 w-3" />
           </>
         )}
       </button>

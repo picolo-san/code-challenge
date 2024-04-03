@@ -11,11 +11,11 @@ export const Span: React.FunctionComponent<SpanProps> = ({
   ...rest
 }) => {
   return (
-    <p
+    <span
       className={twMerge("text-base mx-0 my-0 text-colors-text", className)}
       {...rest}
     >
       {children}
-    </p>
+    </span>
   );
 };

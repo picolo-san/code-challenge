@@ -19,7 +19,7 @@ export const inputStyles =
   "bg-transparent text-colors-textSubtle flex-grow border-none outline-none placeholder:text-colors-textSubtle";
 
 export const popularTokensStyles =
-  "grid grid-rows-[1.25rem_auto_auto] grid-cols-4 mx-6 gap-y-2 gap-x-2  mb-4";
+  "grid grid-rows-[1.25rem_auto_auto] grid-cols-4 px-6 gap-y-2 gap-x-2  pb-4 border-b border-b-colors-input";
 
 export const popularTokensTitleStyles = "row-start-1 col-start-1 col-span-4";
 
