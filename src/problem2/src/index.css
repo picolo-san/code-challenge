@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  html {
+    font-size: 10px;
+    @screen lg {
+      font-size: 16px;
+    }
+    @screen 2xl {
+      font-size: 20px;
+    }
+  }
+  *::-webkit-scrollbar {
+    width: 0.5rem;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: #b8add2;
+    border-radius: 0.5rem;
+  }
+  *::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 0.25rem #372f47;
+    border-radius: 10px;
+  }
+}
